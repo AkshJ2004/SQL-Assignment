@@ -1,0 +1,359 @@
+1.CREATE TABLE university_bhopal (
+  student_id INT PRIMARY KEY,
+  student_name VARCHAR(20) NOT NULL,
+  student_department VARCHAR(25) NOT NULL
+);
+
+INSERT INTO university_bhopal (student_id, student_name, student_department) 
+VALUES (222, 'Karthik', 'cs'), (312, 'Arun', 'cs');
+
+SELECT * FROM university_bhopal;
+
+CREATE TABLE university_exam (
+  student_id INT PRIMARY KEY, 
+  student_name VARCHAR(20) NOT NULL,
+  student_college VARCHAR(25) NOT NULL
+);
+
+INSERT INTO university_exam (student_id, student_name, student_college) 
+VALUES (104, 'Karthik', 'chennai'), (103, 'Arun', 'bhopal');
+
+SELECT * FROM university_exam;
+
+SELECT student_department, COUNT(*) AS department_count 
+FROM Employees
+GROUP BY student_department
+HAVING COUNT(*) < 5;
+
+SELECT *
+FROM (
+  SELECT *
+  FROM Employees
+  ORDER BY employee_id DESC
+  LIMIT 5
+) AS subquery
+ORDER BY employee_id;
+
+
+
+
+2.CREATE TABLE student_info (
+    student_no INT PRIMARY KEY,
+    full_name VARCHAR(25) NOT NULL,
+    faculty VARCHAR(25) NOT NULL
+);
+
+
+INSERT INTO student_info VALUES 
+(1001, 'Jayanth', 'ECE'),
+(1002, 'Praveen', 'CSE'),
+(1003, 'Logesh', 'Mech'),
+(1006, 'Karthick', 'Aero'),
+(1007, 'Mahesh', 'Civil');
+
+
+SELECT * FROM student_info;
+
+DROP TABLE IF EXISTS academic_records;
+
+
+CREATE TABLE academic_records (
+    student_no INT PRIMARY KEY,
+    gpa VARCHAR(5) NOT NULL
+);
+
+
+INSERT INTO academic_records VALUES 
+(1001, '7.2'),
+(1002, '8.6'),
+(1007, '9.25');
+
+SELECT * FROM academic_records;
+
+SELECT * FROM student_info CROSS JOIN academic_records;
+
+SELECT * 
+FROM employee_list 
+WHERE emp_id IN (SELECT DISTINCT manager_id FROM employee_list WHERE manager_id IS NOT NULL);
+
+
+SELECT E.* 
+FROM employee_list E
+INNER JOIN team_leads T ON E.emp_id = T.manager_id;
+
+
+
+3.CREATE TABLE people (
+    person_id INT PRIMARY KEY, 
+    last_name VARCHAR(255) NOT NULL UNIQUE, 
+    first_name VARCHAR(255) NOT NULL UNIQUE, 
+    person_age INT
+);
+
+DESC people;
+
+INSERT INTO people (person_id, last_name, first_name, person_age) 
+VALUES (1, 'Doe', 'John', 30);
+
+SELECT * FROM people;
+
+
+
+4.USE company_db;
+
+CREATE TABLE categories (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE items (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category_id INT,
+    CONSTRAINT fk_category FOREIGN KEY (category_id)
+    REFERENCES categories(id)
+);
+
+SHOW TABLES FROM company_db;
+
+DESC items;
+
+INSERT INTO items VALUES (1001, 'Office Desk', NULL);
+
+SELECT * FROM items;
+
+SELECT * FROM categories;
+
+DELETE FROM categories WHERE id = 201;
+
+DROP TABLE items;
+
+DROP TABLE categories;
+
+
+
+
+5.SELECT * FROM Students WHERE student_name LIKE 'A%';
+SELECT * FROM Students WHERE student_name LIKE '_d%';
+
+USE ORG123;
+
+CREATE TABLE EmployeeBonus (
+	EMPLOYEE_REF_ID INT,
+	BONUS_AMOUNT INT,
+	BONUS_DATE DATE,
+	FOREIGN KEY (EMPLOYEE_REF_ID)
+		REFERENCES Employee(Employee_ID)
+        ON DELETE CASCADE
+);
+
+INSERT INTO EmployeeBonus 
+	(EMPLOYEE_REF_ID, BONUS_AMOUNT, BONUS_DATE) VALUES
+		(1, 5000, '2020-02-16'),
+		(2, 3000, '2011-06-16'),
+		(3, 4000, '2020-02-16'),
+		(1, 4500, '2020-02-16'),
+		(2, 3500, '2011-06-16');
+
+SELECT * FROM Employee  
+WHERE EMPLOYEE_NAME NOT IN ('Vipul', 'Satish');
+
+SELECT * FROM Employee  
+WHERE EMPLOYEE_NAME LIKE '%a';
+
+SELECT * FROM Employee  
+WHERE EMPLOYEE_NAME LIKE '_____h';  
+
+SELECT DEPARTMENT, COUNT(*) AS Employee_Count  
+FROM Employee  
+GROUP BY DEPARTMENT  
+ORDER BY Employee_Count DESC;
+
+SELECT * FROM Employee WHERE EMPLOYEE_ID = 1  
+UNION ALL  
+SELECT * FROM Employee WHERE EMPLOYEE_ID = 1;
+
+
+
+6.SHOW DATABASES;
+
+CREATE DATABASE CompanyDB;
+
+-- Use the 'CompanyDB' database
+USE CompanyDB;
+
+CREATE TABLE Employees (
+    emp_id INT,
+    emp_name VARCHAR(30),
+    emp_salary INT
+);
+
+SHOW TABLES FROM CompanyDB;
+
+SELECT * FROM Employees;
+
+INSERT INTO Employees (emp_id, emp_name, emp_salary) VALUES (70, 'John', 78000);
+
+DESC Employees;
+
+ALTER TABLE Employees ADD COLUMN emp_address VARCHAR(200);
+
+ALTER TABLE Employees DROP COLUMN emp_address;
+
+ALTER TABLE Employees ADD COLUMN emp_country VARCHAR(200);
+
+ALTER TABLE Employees RENAME COLUMN emp_state TO emp_country;
+
+UPDATE Employees 
+SET emp_country = 'India' 
+WHERE emp_id = 70;
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE Employees  
+SET emp_country = 'Belgium'  
+WHERE emp_id = 80;
+
+SET SQL_SAFE_UPDATES = 1; -- (Re-enable safe mode after update)
+
+UPDATE Employees 
+SET emp_name = 'Michael'
+WHERE emp_id = 70;
+
+CREATE DATABASE ProjectDB;
+USE ProjectDB;
+SELECT * FROM ProjectDB; -- This command won't work because it's not a table.
+CREATE TABLE Mechanical(s_id INT, s_name VARCHAR(25));
+
+START TRANSACTION;
+INSERT INTO Mechanical VALUES (101, 'Robert');
+
+CREATE DATABASE ProjectDB;
+USE ProjectDB;
+CREATE TABLE Mechanical(s_id INT, s_name VARCHAR(25));
+START TRANSACTION;
+INSERT INTO Mechanical VALUES (101, 'Robert');
+SAVEPOINT A;
+UPDATE Mechanical SET s_id = 102 WHERE s_id = 101;
+SAVEPOINT B;
+INSERT INTO Mechanical VALUES (103, 'Kevin');
+SELECT * FROM Mechanical;
+SAVEPOINT C;
+SELECT * FROM Mechanical;
+ROLLBACK TO B;
+SELECT * FROM Mechanical;
+COMMIT;
+
+CREATE DATABASE OrganizationDB;
+SHOW DATABASES;
+USE OrganizationDB;
+
+CREATE TABLE Staff (
+    staff_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    first_name CHAR(25),
+    last_name CHAR(25),
+    salary INT(15),
+    joining_date DATETIME,
+    department CHAR(25)
+);
+
+SHOW TABLES FROM OrganizationDB;
+DESC Staff;
+
+SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 1; -- (Re-enable safe mode after update)
+
+SELECT * FROM OrganizationDB;
+
+INSERT INTO Staff 
+    (staff_id, first_name, last_name, salary, joining_date, department) VALUES
+        (001, 'Emily', 'Clark', 100000, '14-02-20 09.00.00', 'HR'),
+        (002, 'Nathan', 'Smith', 80000, '14-06-11 09.00.00', 'Admin'),
+        (003, 'Liam', 'Williams', 300000, '14-02-20 09.00.00', 'HR'),
+        (004, 'Olivia', 'Brown', 500000, '14-02-20 09.00.00', 'Admin'),
+        (005, 'Noah', 'Johnson', 500000, '14-06-11 09.00.00', 'Admin'),
+        (006, 'Sophia', 'Davis', 200000, '14-06-11 09.00.00', 'Account'),
+        (007, 'James', 'Wilson', 75000, '14-01-20 09.00.00', 'Account'),
+        (008, 'Mia', 'Taylor', 90000, '14-04-11 09.00.00', 'Admin');
+
+SELECT * FROM Staff 
+WHERE salary > 200000 AND department = 'HR';
+
+SELECT * FROM Staff 
+WHERE salary >= 200000;
+
+SELECT * FROM Staff;
+
+SELECT * FROM Staff WHERE salary >= 200000 AND salary <= 500000;
+
+SELECT first_name FROM Staff WHERE salary BETWEEN 200000 AND 400000 AND staff_id IN (1,2,3,4,5);
+
+DESC Staff;
+
+SELECT * FROM Staff WHERE salary BETWEEN 200000 AND 400000 AND staff_id IN (1,2,3,4,5);
+
+SELECT MIN(salary)
+FROM Staff
+WHERE department = 'HR';
+
+SELECT MAX(salary)
+FROM Staff
+WHERE department = 'HR';
+
+SELECT * FROM Staff 
+WHERE department = 'HR' 
+ORDER BY salary ASC 
+LIMIT 1;
+
+SELECT * FROM Staff S1
+WHERE NOT EXISTS (
+    SELECT 1 FROM Staff S2
+    WHERE S2.department = S1.department AND S2.salary > S1.salary
+);
+
+SELECT S1.salary AS highest_salary
+FROM Staff S1, Staff S2
+WHERE S1.department = 'Account' 
+AND S1.salary >= S2.salary
+AND S2.department = 'Account'
+GROUP BY S1.salary
+HAVING COUNT(S2.salary) = (SELECT COUNT(*) FROM Staff WHERE department = 'Account');
+
+SELECT S1.salary AS lowest_salary
+FROM Staff S1, Staff S2
+WHERE S1.department = 'Account' 
+AND S1.salary <= S2.salary
+AND S2.department = 'Account'
+GROUP BY S1.salary
+HAVING COUNT(S2.salary) = (SELECT COUNT(*) FROM Staff WHERE department = 'Account');
+
+SELECT COUNT(department)
+FROM Staff
+WHERE department = 'Admin';
+
+SELECT AVG(salary)
+FROM Staff
+WHERE department = 'HR';
+
+SELECT SUM(salary)
+FROM Staff
+WHERE department = 'Admin';
+
+SELECT MAX(salary) AS max_salary
+FROM (
+    SELECT MAX(salary) AS salary FROM Staff WHERE department = 'Account'
+    UNION
+    SELECT MAX(salary) AS salary FROM Staff WHERE department = 'HR'
+) AS salary_data;
+
+SELECT * FROM Staff WHERE department='Admin' ORDER BY salary DESC LIMIT 3;
+
+SELECT department, COUNT(department) AS total_staff FROM Staff 
+WHERE department = 'HR' OR department = 'Account' 
+GROUP BY department;
+
+SELECT department, COUNT(*) AS count
+FROM Staff
+GROUP BY department
+ORDER BY count DESC
+LIMIT 2;
